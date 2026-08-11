@@ -34,6 +34,12 @@ pipeline {
                 bat 'dir target'
             }
         }
+
+        stage('Docker image'){
+        steps {
+            bat'docker build -t cicd-demo1:latest .'
+        }
+        }
     }
 
     post {
