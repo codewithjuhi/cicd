@@ -1,51 +1,48 @@
 pipeline {
-agent any
+    agent any
 
-stages {
+    stages {
 
-    stage('Checkout') {
-        steps {
-            checkout scm
-        }
-    }
-
-    stage('Build') {
-        steps {
-            bat 'mvnw.cmd clean package'
-        }
-    }
- stage('SonarQube Analysis') {
+        stage('Checkout') {
             steps {
-                echo 'Running SonarQube analysis...'
+                checkout scm
+            }
+        }
 
+        stage('Build') {
+            steps {
+                bat 'mvnw.cmd clean package'
+            }
+        }
+
+        stage('Test') {
+            steps {
+                bat 'mvnw.cmd test'
+            }
+        }
+
+        stage('SonarQube Analysis') {
+            steps {
                 withSonarQubeEnv('SonarQube') {
-                    bat 'mvn sonar:sonar -Dsonar.projectKey=cicd-demo1'
+                    bat 'mvnw.cmd sonar:sonar -Dsonar.projectKey=cicd-demo1 -Dsonar.projectName=cicd-demo1'
                 }
             }
         }
-    }
-    stage('Test') {
-        steps {
-            bat 'mvnw.cmd test'
+
+        stage('Verify') {
+            steps {
+                bat 'dir target'
+            }
         }
     }
 
-    stage('Verify') {
-        steps {
-            bat 'dir target'
+    post {
+        success {
+            echo 'Build and SonarQube analysis successful!'
+        }
+
+        failure {
+            echo 'Build or SonarQube analysis failed!'
         }
     }
-
-}
-
-post {
-    success {
-        echo 'Build successful!'
-    }
-
-    failure {
-        echo 'Build failed!'
-    }
-}
-
 }
