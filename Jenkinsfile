@@ -21,13 +21,13 @@ pipeline {
             }
         }
 
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    bat 'mvnw.cmd sonar:sonar -Dsonar.projectKey=cicd-demo1 -Dsonar.projectName=cicd-demo1'
-                }
-            }
-        }
+       stage('SonarQube Analysis') {
+           steps {
+               withSonarQubeEnv('SonarQube') {
+                   bat 'mvnw.cmd clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.projectKey=cicd-demo1 -Dsonar.projectName=cicd-demo1'
+               }
+           }
+       }
 
         stage('Verify') {
             steps {
